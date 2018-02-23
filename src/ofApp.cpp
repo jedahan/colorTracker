@@ -6,16 +6,14 @@ void ofApp::setup() {
 
     ofBackground(100,100,100);
 
-    roomdb_host = ofGetEnv("ROOMDB_HOST");
-    roomdb_port = ofToInt(ofGetEnv("ROOMDB_PORT"));
+    std::string env_host = ofGetEnv("ROOMDB_HOST");
+    std::string env_port = ofGetEnv("ROOMDB_PORT");
 
-    if (roomdb_host == "") {
-      roomdb_host = "http://localhost";
-    }
+    if (env_host == "") env_host = DEFAULT_HOST;
+    if (env_port == "") env_port = DEFAULT_PORT;
 
-    if (roomdb_port == 0) {
-        roomdb_port = 41234;
-    }
+    roomdb_host = env_host;
+    roomdb_port = ofToInt(env_port);
 
     sender.setup(roomdb_host, roomdb_port);
 

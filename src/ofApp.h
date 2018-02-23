@@ -4,6 +4,9 @@
 #include "ofxOpenCv.h"
 #include "ofxOsc.h"
 
+#define DEFAULT_HOST "http://localhost"
+#define DEFAULT_PORT 3000
+
 class ofApp : public ofBaseApp {
     public:
         void setup();
