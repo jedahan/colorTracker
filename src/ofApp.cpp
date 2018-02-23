@@ -59,9 +59,10 @@ void ofApp::update(){
         //store the three channels as grayscale images
         hsb.convertToGrayscalePlanarImages(hue, sat, bri);
 
+       int range = 10;
         //filter image based on the hue value were looking for
         for (int i=0; i<width*height; i++) {
-            filtered.getPixels()[i] = ofInRange(hue.getPixels()[i],findHue-5,findHue+5) ? 255 : 0;
+            filtered.getPixels()[i] = ofInRange(hue.getPixels()[i],findHue-range,findHue+range) ? 255 : 0;
         }
 
         filtered.flagImageChanged();
