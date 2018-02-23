@@ -14,7 +14,7 @@ void ofApp::setup() {
     }
 
     if (roomdb_port == 0) {
-        roomdb_port = 3000;
+        roomdb_port = 41234;
     }
 
     sender.setup(roomdb_host, roomdb_port);
