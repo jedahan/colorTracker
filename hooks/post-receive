@@ -1,0 +1,17 @@
+#!/bin/bash
+while read oldrev newrev ref
+do
+    if [[ $ref =~ .*/master$ ]];
+    then
+        echo "Master ref received.  Deploying master branch to production..."
+	app_path=/home/room/openFrameworks/apps/roomSensors/colorTracker
+	chown -R room:recursers /home/room/openFrameworks
+	git --work-tree=$app_path --git-dir=$PWD checkout -f
+	echo "Building new app"
+	pushd $app_path
+	make &&	killall colorTracker && make RunRelease
+	popd
+    else
+        echo "Ref $ref successfully received.  Doing nothing: only the master branch may be deployed on this server."
+    fi
+done
