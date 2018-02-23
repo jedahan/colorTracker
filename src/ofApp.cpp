@@ -52,15 +52,6 @@ void ofApp::update(){
         //copy webcam pixels to rgb image
         rgb.setFromPixels(movie.getPixels());
 
-        //mirror horizontal
-        rgb.mirror(false, true);
-
-        /*
-        for (int i = 0; i < width * height; i++) {
-            rgb.getPixels()[i] = rgb.getPixels()[i] > 0x01000000 ? 0 : 255;
-        }
-        */
-
         hsb = rgb; // copy rgb
 
         hsb.convertRgbToHsv();
