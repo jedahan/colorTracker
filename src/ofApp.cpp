@@ -1,23 +1,26 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
+
     ofSetFrameRate(30);
-    isConnected = false;
-    status = "not connected";
 
     ofBackground(100,100,100);
 
-    roomdb_uri = ofGetEnv("ROOMDB_URI");
+    roomdb_host = ofGetEnv("ROOMDB_HOST");
+    roomdb_port = ofToInt(ofGetEnv("ROOMDB_PORT"));
 
-    if (roomdb_uri == "") {
-      roomdb_uri = "http://localhost:3000";
+    if (roomdb_host == "") {
+      roomdb_host = "http://localhost";
     }
 
-    ofLog() << "roomdb_uri is " << roomdb_uri << std::endl;
+    if (roomdb_port == 0) {
+        roomdb_port = 3000;
+    }
 
-    socketIO.setup(roomdb_uri);
-    ofAddListener(socketIO.notifyEvent, this, &ofApp::gotEvent);
-    ofAddListener(socketIO.connectionEvent, this, &ofApp::onConnection);
+    sender.setup(roomdb_host, roomdb_port);
+
+    ofLog() << "roomdb_host is " << roomdb_host << std::endl;
+    ofLog() << "roomdb_port is " << roomdb_port << std::endl;
 
     width = 320;
     height = 240;
@@ -40,12 +43,6 @@ string string_format( const std::string& format, Args ... args )
     unique_ptr<char[]> buf( new char[ size ] );
     snprintf( buf.get(), size, format.c_str(), args ... );
     return string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
-}
-
-void ofApp::onConnection () {
-  isConnected = true;
-  socketIO.bindEvent(assertEvent, "assert");
-  ofAddListener(assertEvent, this, &ofApp::onAssertEvent);
 }
 
 void ofApp::update(){
@@ -91,9 +88,13 @@ void ofApp::sendContours() {
         auto blob = contours.blobs[i];
         auto x = blob.centroid.x / width;
         auto y = blob.centroid.y / height;
+
+        ofxOscMessage m;
+        m.setAddress("/assert");
         std::string facts = string_format("#label%d is a label at (%03.2f, %03.2f)", i, x, y);
-        std::string event = "assert";
-        socketIO.emit(event, facts);
+        m.addStringArg(facts);
+        sender.sendMessage(m, false);
+
     }
 }
 
@@ -116,8 +117,6 @@ void ofApp::draw(){
     for (int i=0; i<contours.nBlobs; i++) {
         ofDrawCircle(contours.blobs[i].centroid.x, contours.blobs[i].centroid.y, 20);
     }
-
-    ofDrawBitmapStringHighlight(ofApp::status, 20, 20);
 }
 
 void ofApp::mousePressed (int x, int y, int button) {
@@ -127,15 +126,4 @@ void ofApp::mousePressed (int x, int y, int button) {
 
     //get hue value on mouse position
     findHue = hue.getPixels()[my*width+mx];
-}
-
-void ofApp::gotEvent (string& name) {
-    status = name;
-}
-
-void ofApp::onAssertEvent (ofxSocketIOData& data) {
-    auto result = data.getVector();
-    for (uint8_t i = 0; i < result.size(); i++) {
-      ofLogNotice("ofxSocketIO", ofToString(result[i]));
-    }
 }

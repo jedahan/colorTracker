@@ -2,8 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
-#include "ofxSocketIO.h"
-#include "ofxSocketIOData.h"
+#include "ofxOsc.h"
 
 class ofApp : public ofBaseApp {
     public:
@@ -21,15 +20,7 @@ class ofApp : public ofBaseApp {
         ofxCvGrayscaleImage hue,sat,bri,filtered;
         ofxCvContourFinder contours;
 
-        ofxSocketIO socketIO;
-        bool isConnected;
-        std::string roomdb_uri;
-        std::string status;
-
-        void onConnection();
-        void bindEvents();
-        void gotEvent(std::string& name);
-
-        ofEvent<ofxSocketIOData&> assertEvent;
-        void onAssertEvent(ofxSocketIOData& data);
+        std::string roomdb_host;
+        int roomdb_port;
+        ofxOscSender sender;
 };
