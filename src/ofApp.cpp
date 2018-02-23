@@ -13,6 +13,8 @@ void ofApp::setup() {
       roomdb_uri = "http://localhost:3000";
     }
 
+    ofLog() << "roomdb_uri is " << roomdb_uri << std::endl;
+
     socketIO.setup(roomdb_uri);
     ofAddListener(socketIO.notifyEvent, this, &ofApp::gotEvent);
     ofAddListener(socketIO.connectionEvent, this, &ofApp::onConnection);
@@ -35,7 +37,7 @@ template<typename ... Args>
 string string_format( const std::string& format, Args ... args )
 {
     size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
-    unique_ptr<char[]> buf( new char[ size ] ); 
+    unique_ptr<char[]> buf( new char[ size ] );
     snprintf( buf.get(), size, format.c_str(), args ... );
     return string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
 }
@@ -58,6 +60,12 @@ void ofApp::update(){
         //mirror horizontal
         rgb.mirror(false, true);
 
+        /*
+        for (int i = 0; i < width * height; i++) {
+            rgb.getPixels()[i] = rgb.getPixels()[i] > 0x01000000 ? 0 : 255;
+        }
+        */
+
         hsb = rgb; // copy rgb
 
         hsb.convertRgbToHsv();
@@ -72,7 +80,7 @@ void ofApp::update(){
 
         filtered.flagImageChanged();
         //run the contour finder on the filtered image to find blobs with a certain hue
-        contours.findContours(filtered, 50, width*height/2, 5, false);
+        contours.findContours(filtered, 25, width*height/2, 5, false);
 
         sendContours();
     }
@@ -127,7 +135,7 @@ void ofApp::gotEvent (string& name) {
 
 void ofApp::onAssertEvent (ofxSocketIOData& data) {
     auto result = data.getVector();
-    for (int i = 0; i < result.size(); i++) {
+    for (uint8_t i = 0; i < result.size(); i++) {
       ofLogNotice("ofxSocketIO", ofToString(result[i]));
     }
 }
