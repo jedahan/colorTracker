@@ -16,10 +16,10 @@ class ofApp : public ofBaseApp {
         int width = 320;
         int height = 240;
     
-        uint8_t hueRange = 10;
-        const uint8_t numberOfHuesToTrack = 4;
-        uint8_t huesToTrack[4] = {0, 64, 128, 192};
-        uint8_t huesToTrackIndex = 0;
+        unsigned int hueRange = 7;
+        const static unsigned int numberOfHuesToTrack = 4;
+        unsigned int huesToTrack[numberOfHuesToTrack] = {13, 63, 102, 167};
+        unsigned int huesToTrackIndex = 0;
     
         vector<ofxCvGrayscaleImage> hues;
     
