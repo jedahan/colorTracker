@@ -1,3 +1,4 @@
+ofxBonjour
+ofxLivingRoom
 ofxOpenCv
 ofxOsc
-ofxSocketIO

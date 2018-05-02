@@ -2,28 +2,36 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
-#include "ofxOsc.h"
-
-#define DEFAULT_HOST "http://localhost"
-#define DEFAULT_PORT 3000
+#include "ofxLivingRoom.h"
 
 class ofApp : public ofBaseApp {
     public:
         void setup();
         void update();
         void draw();
-        void sendContours();
 
         void mousePressed(int x, int y, int button);
+        void sendContours();
 
-        int width, height;
-        int findHue;
+        int width = 320;
+        int height = 240;
+    
+        uint8_t hueRange = 10;
+        const uint8_t numberOfHuesToTrack = 4;
+        uint8_t huesToTrack[4] = {0, 64, 128, 192};
+        uint8_t huesToTrackIndex = 0;
+    
+        vector<ofxCvGrayscaleImage> hues;
+    
+        ofxLivingRoom room;
+    
         ofVideoGrabber movie;
-        ofxCvColorImage rgb,hsb;
-        ofxCvGrayscaleImage hue,sat,bri,filtered;
-        ofxCvContourFinder contours;
-
-        std::string roomdb_host;
-        int roomdb_port;
-        ofxOscSender sender;
+        ofxCvColorImage rgb;
+        ofxCvColorImage hsb;
+    
+        ofxCvGrayscaleImage hue;
+        ofxCvGrayscaleImage sat;
+        ofxCvGrayscaleImage bri;
+    
+        vector<ofxCvContourFinder> contours;
 };
