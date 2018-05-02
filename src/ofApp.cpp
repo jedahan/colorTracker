@@ -6,7 +6,6 @@ void ofApp::setup() {
     ofBackground(100, 100, 100);
 
     room.setup();
-    ofLog() << "tracking " << numberOfHuesToTrack << " hues" << std::endl;
     
     hues.resize(numberOfHuesToTrack);
     contours.resize(numberOfHuesToTrack);
@@ -64,7 +63,7 @@ void ofApp::sendContours() {
             auto cy = blob.centroid.y / height;
             
             std::string fact = "color" + ofToString(x) + ofToString(i) + " is hue " + ofToString(unsigned(huesToTrack[x])) + " at (" + ofToString(cx) + ", " + ofToString(cy) + ")";
-            ofLog() << fact << std::endl;
+            //ofLog() << fact << std::endl;
             room.assertFact(fact);
         }
     }
@@ -75,8 +74,9 @@ void ofApp::draw() {
     ofSetColor(255,255,255);
 
     //draw all cv images
-    rgb.draw(0, 0);
-    hsb.draw(width, 0);
+    rgb.draw(0 * width, 0);
+    hsb.draw(1 * width, 0);
+    rgb.draw(2 * width, 0);
     for (int x = 0; x < numberOfHuesToTrack; x++) {
         ofSetColor(ofColor::fromHsb(huesToTrack[x], 255, 255));
         hues[x].draw(x * width, height);
@@ -85,12 +85,14 @@ void ofApp::draw() {
         ofFill();
         
         //draw red circles for found blobs
-        for (int i=0; i<contours[x].nBlobs; i++) {
+        std::string colorString = ofToString(contours[x].nBlobs) + " " + ofToString(unsigned(huesToTrack[x]));
+        ofDrawBitmapStringHighlight(colorString, x * width, ofGetHeight() - 16);
+        for (int i = 0; i < contours[x].nBlobs; i++) {
             auto blob = contours[x].blobs[i];
             auto ratio = blob.boundingRect.getAspectRatio();
             // if (ratio > 2 || ratio < 0.5) return; // non-square
             auto radius = (blob.boundingRect.width + blob.boundingRect.height) / 3;
-            ofDrawCircle(blob.centroid.x, blob.centroid.y,radius);
+            ofDrawCircle((2 * width) + blob.centroid.x, blob.centroid.y, radius);
         }
     }
 }
